@@ -1,0 +1,39 @@
+name: mss
+
+services:
+  db:
+    image: mariadb:11.8
+    container_name: mss-db
+    restart: always
+    networks:
+      - mss-network
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PWD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_USER_PWD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  adminer:
+    image: adminer:5.4.2
+    container_name: mss-adminer
+    restart: always
+    networks:
+      - mss-network
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+networks:
+  mss-network:
+    driver: bridge
+
+volumes:
+  db_data:
