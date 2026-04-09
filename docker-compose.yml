@@ -5,8 +5,6 @@ services:
     image: mariadb:11.8
     container_name: mss-db
     restart: always
-    networks:
-      - mss-network
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PWD}
       MARIADB_DATABASE: ${DB_NAME}
@@ -14,6 +12,8 @@ services:
       MARIADB_PASSWORD: ${DB_USER_PWD}
     ports:
       - "3306:3306"
+    networks:
+      - mss-network
     volumes:
       - db_data:/var/lib/mysql
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -22,14 +22,33 @@ services:
     image: adminer:5.4.2
     container_name: mss-adminer
     restart: always
-    networks:
-      - mss-network
     environment:
-      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DEFAULT_SERVER: ${DB_HOST}
     ports:
       - "8080:8080"
     depends_on:
       - db
+    networks:
+      - mss-network
+
+  api:
+    build: ./api
+    image: jublaaarau/mss-api:latest
+    container_name: mss-api
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - mss-network
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    
+      
 
 networks:
   mss-network:
