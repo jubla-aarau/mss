@@ -12,11 +12,15 @@ export const swaggerOptions: Options = {
     servers: [
       { 
         url: 'http://192.168.32.70:3000', 
-        description: 'LAN Development' 
+        description: 'Development Server (local)' 
       },
       { 
         url: 'http://100.65.134.101:3000', 
-        description: 'Remote via Tailscale' 
+        description: 'Development Server (tailscale)' 
+      },
+      { 
+        url: 'http://mss.jubla-aarau.ch:3000', 
+        description: 'Production Server' 
       }
     ],
     components: {

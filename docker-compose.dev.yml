@@ -2,6 +2,7 @@ name: mss
 
 services:
   db:
+    build: ./database
     image: jublaaarau/mss-db:1.0.0
     container_name: mss-db
     restart: always
@@ -10,6 +11,8 @@ services:
       MARIADB_DATABASE: ${DB_NAME}
       MARIADB_USER: ${DB_USER}
       MARIADB_PASSWORD: ${DB_USER_PWD}
+    ports:
+      - "3306:3306"
     networks:
       - mss-network
     volumes:
@@ -29,9 +32,11 @@ services:
       - mss-network
 
   api:
+    build: ./api
     image: jublaaarau/mss-api:1.0.0
     container_name: mss-api
     restart: always
+    command: npm run dev
     ports:
       - "3000:3000"
     env_file:
@@ -40,6 +45,9 @@ services:
       - db
     networks:
       - mss-network
+    volumes:
+      - ./api:/app
+      - /app/node_modules
     
       
 
